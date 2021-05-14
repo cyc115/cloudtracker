@@ -165,8 +165,8 @@ class Athena(object):
         # Mute boto except errors
         logging.getLogger("botocore").setLevel(logging.WARN)
         logging.info(
-            "Source of CloudTrail logs: s3://{bucket}/{path}".format(
-                bucket=config["s3_bucket"], path=config["path"]
+            "Source of CloudTrail logs: s3://{bucket}".format(
+                bucket=config["s3_bucket"]
             )
         )
 
@@ -237,12 +237,12 @@ class Athena(object):
         logging.info("Using workgroup: {}".format(self.workgroup))
 
         if not config.get('org_id'):
-            cloudtrail_log_path = "s3://{bucket}/{path}/AWSLogs/{account_id}/CloudTrail".format(
-                bucket=config["s3_bucket"], path=config["path"], account_id=account["id"]
+            cloudtrail_log_path = "s3://{bucket}/AWSLogs/{account_id}/CloudTrail".format(
+                bucket=config["s3_bucket"], account_id=account["id"]
             )
         else:
-            cloudtrail_log_path = "s3://{bucket}/{path}/AWSLogs/{org_id}/{account_id}/CloudTrail".format(
-                bucket=config["s3_bucket"], path=config["path"], org_id=config["org_id"], account_id=account["id"]
+            cloudtrail_log_path = "s3://{bucket}/AWSLogs/{org_id}/{account_id}/CloudTrail".format(
+                bucket=config["s3_bucket"], org_id=config["org_id"], account_id=account["id"]
             )
 
         logging.info("Account cloudtrail log path: {}".format(cloudtrail_log_path))
@@ -257,12 +257,12 @@ class Athena(object):
 
         # Check we can access the S3 bucket
         resp = self.s3.list_objects_v2(
-            Bucket=config["s3_bucket"], Prefix=config["path"], MaxKeys=1
+            Bucket=config["s3_bucket"], MaxKeys=1
         )
         if "Contents" not in resp or len(resp["Contents"]) == 0:
             exit(
-                "ERROR: S3 bucket has no contents.  Ensure you have logs at s3://{bucket}/{path}".format(
-                    bucket=config["s3_bucket"], path=config["path"]
+                "ERROR: S3 bucket has no contents.  Ensure you have logs at s3://{bucket}".format(
+                    bucket=config["s3_bucket"]
                 )
             )
 
